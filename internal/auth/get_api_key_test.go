@@ -1,9 +1,8 @@
 package auth
 
 import (
-	"errors"
 	"net/http"
-	"strings"
+	"testing"
 )
 
 func TestExample(t *testing.T) {
@@ -14,13 +13,23 @@ func TestExample(t *testing.T) {
         t.Fatalf("expected an error, got nil")
     }
 
-    // Case 2: Testing valid input where err should be nil
-    headers.Set("Some-Header", "Valid Value")
+    // Case 2: Testing invalid input where err should not be nil
+    headers.Set("Some-Header", "ValidValue")
     result, err := GetAPIKey(headers)
     if err != nil {
         t.Fatalf("unexpected error: %v", err)
     }
-    if result != "ExpectedValue" {
-        t.Fatalf("expected %q, got %q", "ExpectedValue", result)
+    if result != "Valid Value" {
+        t.Fatalf("expected %q, got %q", "ValidValue", result)
+    }
+
+    // Case 3: Testing valid input where err should be nil
+    headers.Set("Authorization", "ApiKey ValidValue")
+    result, err = GetAPIKey(headers)
+    if err != nil {
+        t.Fatalf("unexpected error: %v", err)
+    }
+    if result != "ValidValue" {
+        t.Fatalf("expected %q, got %q", "ValidValue", result)
     }
 }
