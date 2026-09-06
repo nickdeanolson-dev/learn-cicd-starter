@@ -25,7 +25,7 @@ jobs:
         run: go install github.com/securego/gosec/v2/cmd/gosec@latest
 
       - name: security test
-        run: test -z $(gosec ./...)
+        run: gosec ./...
 
       
   
@@ -49,4 +49,4 @@ jobs:
         run: test -z $(go fmt ./...)
       
       - name: Linting test
-        run: test -z $(staticcheck ./...)
+        run: staticcheck ./...
