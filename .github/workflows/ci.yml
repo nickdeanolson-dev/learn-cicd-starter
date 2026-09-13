@@ -20,6 +20,14 @@ jobs:
 
       - name: Quick auth tests
         run: go test ./... -cover
+
+      - name: Install gosec
+        run: go install github.com/securego/gosec/v2/cmd/gosec@latest
+
+      - name: security test
+        run: gosec ./...
+
+      
   
   style:
     name: Style
@@ -41,4 +49,4 @@ jobs:
         run: test -z $(go fmt ./...)
       
       - name: Linting test
-        run: test -z $(staticcheck ./...)
+        run: staticcheck ./...
