@@ -6,10 +6,13 @@ jobs:
   Deploy:
     name: Deploy
     runs-on: ubuntu-latest
+    
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
     permissions:
       contents: 'read'
-      id-token: 'write'
+      id-token: 'write' 
 
     steps:
       - name: Check out code
@@ -20,10 +23,11 @@ jobs:
         with:
           go-version: "1.26.0"
 
+      - name: install goose
+        run: go install github.com/pressly/goose/v3/cmd/goose@latest
 
       - name: build the app
         run: ./scripts/buildprod.sh 
-
 
       - name: deploy to google
         uses: 'google-github-actions/auth@v2'
@@ -35,6 +39,9 @@ jobs:
 
       - name: submit
         run: gcloud builds submit --tag us-central1-docker.pkg.dev/notely-508600/notely-ar-repo/notely:latest .
+
+      - name: migrate db
+        run: ./scripts/migrateup.sh
 
       - name: Deploy to Cloud Run
         run: gcloud run deploy notely --image us-central1-docker.pkg.dev/notely-508600/notely-ar-repo/notely:latest --region us-central1 --allow-unauthenticated --project notely-508600 --max-instances=4
